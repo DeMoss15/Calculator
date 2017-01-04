@@ -7,38 +7,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
+/*Вся программа стоит на ведении данных через кнопки и выведение через TextView
+ * ограничение ввода в onClickListener'e
+ * математика же прописана через односвязный список */
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
-    Button plus;
-    Button minus;
-    Button multiple;
-    Button division;
-    Button one;
-    Button two;
-    Button three;
-    Button four;
-    Button five;
-    Button six;
-    Button seven;
-    Button eight;
-    Button nine;
-    Button zero;
-    Button equal;
-    Button dot;
-    String outLine;
-
-    public void addSymb(char ch) {
-        if (Character.isDigit(textView.getText().charAt(textView.getText().length()-1))) {
-            textView.setText(textView.getText() + " " + ch + " ");
-        } /*else
-            textView.setText((StringBuilder)textView.getText().toString().setCharAt((textView.getText().length()-1), ch));*/
-    };
+    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean;
+    /*Нужно добавить односвязный список, эллементы которого будут содержать число и знак, предествующий ему.
+    * при подсчете сначала будут проверяться умножение и деление(текущий объект взаимодействует с пердыдущим,
+    * после чего результат записывается в число предыдущего, а текущий удаляется из цепи !!! не потерять связь!!!)
+    * потом проверяется действие на +/- аналогичным образом. и так пока не останентся один элемент, он и будет
+    * результатом. !!!!! не потерять ссылку на первый элемент!!!!!
+    *
+    * также описать кнопку сброса (очистка текстового поля и списка)
+    *
+    * проконтролировать кнопку добавления точки!!!!
+    *
+    * продумать ограничение ввода соответственно типу данных*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         zero = (Button) findViewById(R.id.zero);
         equal = (Button) findViewById(R.id.equal);
         dot = (Button) findViewById(R.id.dot);
-        outLine = getString(R.string.out_line);
+        clean = (Button) findViewById(R.id.clean);
 
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
@@ -84,13 +71,20 @@ public class MainActivity extends AppCompatActivity {
                         addSymb('/');
                         break;
                     case R.id.dot:
-                        textView.setText(textView.getText() + ".");
                         break;
                     case R.id.equal:
-                        addSymb('=');
+                        //equals();
+                        break;
+                    case R.id.clean:
+                        textView.setText("");
                         break;
                     default:
-                        textView.setText(textView.getText() + ((TextView) v).getText().toString());
+                        if (textView.getText().length() == 0) textView.setText(textView.getText() + ((TextView) v).getText().toString());
+                        if (((textView.getText().charAt(textView.getText().length()-1)) == '0')
+                                && (!Character.isDigit(textView.getText().charAt(textView.getText().length()-2)))) {
+                            textView.setText(textView.getText().toString().substring(0, textView.getText().length()-1) + ((TextView) v).getText().toString());
+                        } else
+                            textView.setText(textView.getText() + ((TextView) v).getText().toString());
                 }
             }
         };
@@ -112,8 +106,21 @@ public class MainActivity extends AppCompatActivity {
         zero.setOnClickListener(OnClickListener);
         equal.setOnClickListener(OnClickListener);
         dot.setOnClickListener(OnClickListener);
+        clean.setOnClickListener(OnClickListener);
     }
 
-    private void addSymb() {
-    }
+    public void addSymb(char ch) {
+        /*при вооде нового знака создавать новый элеметн списка и вносить вводимый знак в этот элемент*/
+        if (textView.getText().length() == 0) return;
+        CharSequence s = textView.getText();
+        if (Character.isDigit(s.charAt(s.length()-1))) {
+            textView.setText(s + "" + ch);
+        } else {
+            textView.setText(s.toString().substring(0, s.length()-1) + ch);
+        }
+    };
+
+    /*public void equals() {
+
+    };*/
 }
