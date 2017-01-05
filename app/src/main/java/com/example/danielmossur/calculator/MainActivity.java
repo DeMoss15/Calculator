@@ -17,9 +17,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean;
     List numbers = new List();
-    /*проконтролировать кнопку добавления точки!!!!
-    *
-    * продумать ограничение ввода соответственно типу данных*/
+    /*продумать ограничение ввода соответственно типу данных*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
