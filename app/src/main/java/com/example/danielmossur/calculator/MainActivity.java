@@ -7,11 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-/*Вся программа стоит на ведении данных через кнопки и выведение через TextView
- * ограничение ввода в onClickListener'e
- * математика же прописана через односвязный список */
-
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
@@ -45,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         redo = (Button) findViewById(R.id.redo);
         numbers.addBack(' ');
 
-        /*убрать все textView.setText из литснера, остапить только один, после свича
-        * текст реализовать через стринг!!!!*
-        *
-        * придумать одноразовую запись числа*/
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,46 +48,29 @@ public class MainActivity extends AppCompatActivity {
                 }
                 switch (v.getId()) {
                     case R.id.plus:
-                        //addSymb('+');
                         numbers.addBack('+');
                         break;
                     case R.id.minus:
-                        //addSymb('-');
                         numbers.addBack('-');
                         break;
                     case R.id.multiple:
-                        //addSymb('*');
                         numbers.addBack('*');
                         break;
                     case R.id.division:
-                        //addSymb('/');
                         numbers.addBack('/');
                         break;
                     case R.id.dot:
                         numbers.fraction(true);
-                        /*if (textView.getText().length() != 0 &&
-                                Character.isDigit(textView.getText().charAt(textView.getText().length() - 1)) &&
-                                !numbers.fraction(true)) {
-                            textView.setText(textView.getText() + ".");
-                        }*/
                         break;
                     case R.id.equal:
                         numbers.equals();
                         break;
                     case R.id.clean:
-                        //textView.setText("");
                         numbers.clean();
                         break;
                     case R.id.redo:
-                        //textView.setText("back: " + numbers.print());
                         break;
                     default:
-                        /*if (numbers.tailZero() && !numbers.fraction(false) &&
-                                (textView.getText().length() != 0) &&
-                                ((textView.getText().charAt(textView.getText().length() - 1)) == '0'))
-                            textView.setText(textView.getText().toString().substring(0, textView.getText().length() - 1) + ((TextView) v).getText().toString());
-                        else
-                            textView.setText(textView.getText() + ((TextView) v).getText().toString());*/
                         numbers.editTailData(Double.parseDouble(((TextView) v).getText().toString()));
                 }
                 textView.setText(numbers.print());
@@ -123,19 +97,6 @@ public class MainActivity extends AppCompatActivity {
         clean.setOnClickListener(OnClickListener);
         redo.setOnClickListener(OnClickListener);
     }
-
-    /*public void addSymb(char ch) {
-        //при вооде нового знака создавать новый элеметн списка и вносить вводимый знак в этот элемент
-        if (textView.getText().length() == 0) return;
-        CharSequence s = textView.getText();
-        if (Character.isDigit(s.charAt(s.length()-1))) {
-            textView.setText(s + "" + ch);
-            numbers.addBack(ch);
-        } else { //иначе, если требуется замена оператора, его замена в строке и в последнем элементе
-            textView.setText(s.toString().substring(0, s.length()-1) + ch);
-            numbers.editTailOperator(ch);
-        }
-    };*/
 }
 
 class ListElement{
