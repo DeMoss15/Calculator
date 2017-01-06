@@ -15,7 +15,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
-    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean;
+    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean, redo;
     List numbers = new List();
     /*продумать ограничение ввода соответственно типу данных*/
 
@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
         equal = (Button) findViewById(R.id.equal);
         dot = (Button) findViewById(R.id.dot);
         clean = (Button) findViewById(R.id.clean);
-        numbers.addBack('+');
+        redo = (Button) findViewById(R.id.redo);
+        numbers.addBack(' ');
 
         /*убрать все textView.setText из литснера, остапить только один, после свича
         * текст реализовать через стринг!!!!*
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
                         textView.setText("");
                         numbers.clean();
                         break;
+                    case R.id.redo:
+                        textView.setText("back: " + numbers.print());
+                        break;
                     default:
                         if (numbers.tailZero() && !numbers.fraction(false) &&
                                 (textView.getText().length() != 0) &&
@@ -111,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         equal.setOnClickListener(OnClickListener);
         dot.setOnClickListener(OnClickListener);
         clean.setOnClickListener(OnClickListener);
+        redo.setOnClickListener(OnClickListener);
     }
 
     public void addSymb(char ch) {
@@ -139,6 +144,20 @@ class List {
     private ListElement head;       // указатель на первый элемент
     private ListElement tail;       // указатель последний элемент
 
+    String print()
+    {
+        ListElement t = head;
+        String s = "";
+        while (t != null){
+            if (t.fraction_path)
+                s = s + t.operator + t.data;
+            else
+                s = s + t.operator + (int)((double)t.data);//костыль)
+            t = t.next;
+        }
+        return s;
+    }
+
     boolean fraction(boolean i)              //проверка дробной части
     {
         boolean x = tail.fraction_path;
@@ -163,7 +182,7 @@ class List {
             delEl(head.next);
         }
         head.data=0.0;
-        head.operator='+';
+        head.operator=' ';
         head.fraction_path=false;
         head.fraction_range=1;
     }
