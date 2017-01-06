@@ -9,8 +9,9 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textView;
+    TextView textView, result_line;
     Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean, redo;
+    String output_text;
     List numbers = new List();
     /*продумать ограничение ввода соответственно типу данных*/
 
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.textView);
+        result_line = (TextView) findViewById(R.id.result_line);
         plus = (Button) findViewById(R.id.plus);
         minus = (Button) findViewById(R.id.minus);
         multiple = (Button) findViewById(R.id.multiple);
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         clean = (Button) findViewById(R.id.clean);
         redo = (Button) findViewById(R.id.redo);
         numbers.addBack(' ');
+        output_text = "";
 
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
@@ -60,20 +63,26 @@ public class MainActivity extends AppCompatActivity {
                         numbers.addBack('/');
                         break;
                     case R.id.dot:
-                        numbers.fraction(true);
+                        numbers.fraction();
                         break;
                     case R.id.equal:
-                        numbers.equals();
+                        result_line.setText(numbers.equals());
                         break;
                     case R.id.clean:
                         numbers.clean();
+                        result_line.setText("result");
                         break;
                     case R.id.redo:
                         break;
                     default:
                         numbers.editTailData(Double.parseDouble(((TextView) v).getText().toString()));
                 }
-                textView.setText(numbers.print());
+                if (output_text.length() >= 6 && output_text.substring(0, 5).equals("Ошибка"))
+                    textView.setText(output_text);
+                else {
+                    output_text = numbers.print();
+                    textView.setText(output_text);
+                }
             }
         };
 
@@ -125,14 +134,9 @@ class List {
         return s;
     }
 
-    boolean fraction(boolean i)              //проверка дробной части
+    void fraction()              //проверка дробной части
     {
-        boolean x = tail.fraction_path;
-        if (i)
-        {
-            tail.fraction_path = true;
-        }
-        return x;
+        tail.fraction_path = true;
     }
 
     boolean tailZero()
@@ -186,10 +190,12 @@ class List {
             }
         }
 
+        if (head.data%1 != 0.0)
+            head.fraction_path=true;
         if (head.next == null){
             return "" + head.data;
         } else
-            return "Undefined Error";
+            return "Ошибка! Undefined Error";
     }
 
     void editTailOperator(char operator)
