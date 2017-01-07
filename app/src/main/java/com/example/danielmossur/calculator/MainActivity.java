@@ -125,31 +125,30 @@ class List {
         String s = "";
         while (t.next != null){
             if (t.fraction_path)
-                s = s + t.operator + t.data;
+                s = s + t.operator + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
             else
                 s = s + t.operator + (int)((double)t.data);//костыль)
             t = t.next;
         }
-        s = s + tail.operator;
-        if (tail.data == null)
+
+        s = s + t.operator;
+
+        if (t.data == null)
             return s; //если последний елемент ещё не введен, его не отображать
-        if (tail.data == 0.0)
+        if (t.data == 0.0)
         {
-            if (!tail.fraction_path)
+            if (!t.fraction_path)
                 return  s + "0";//если последний елемент равен нулю, но это не дробь
             else
-            if (tail.fraction_range == 0)
+            if (t.fraction_range == 0)
                 return s + "0.";
             else
-                return s + "0." + Double.toString(Math.pow(10,tail.fraction_range)).substring(1, tail.fraction_range+1);
+                return s + String.format(java.util.Locale.ENGLISH, "%(." + (t.fraction_range) + "f", 0.0);
         } else {
-            if (!tail.fraction_path)
-                return s +(int)((double)t.data);//если последний елемент равен нулю, но это не дробь
+            if (!t.fraction_path)
+                return s +(int)((double)t.data);//это не дробь
             else
-            if (tail.fraction_range == 0)
-                return s + (int)((double)t.data) + ".";
-            else
-                return s + (int)((double)t.data) + Double.toString(tail.data - (int)((double)t.data)).substring(1, tail.fraction_range+2);
+                return s + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
         }
     }
 
@@ -207,7 +206,7 @@ class List {
         if (head.data%1 != 0.0)
             head.fraction_path=true;
         if (head.next == null){
-            return "" + head.data;
+            return "" + String.format(java.util.Locale.ENGLISH, "%(." + head.fraction_range + "f", head.data);
         } else
             return "Ошибка! Undefined Error";
     }
@@ -216,14 +215,13 @@ class List {
     {
         if (tail.data == null)
             tail.data = 0.0;
-        if (tail.data*10 <= 999999999.0 && tail.fraction_range < 9)
-            if (!tail.fraction_path)
-                tail.data = tail.data*10 + new_number;
-            else
-            {
-                tail.fraction_range++;
-                tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
-            }
+        if (!tail.fraction_path && tail.data*10 <= 9999999.0)
+            tail.data = tail.data*10 + new_number;
+        else if(tail.fraction_range < 6)
+        {
+            tail.fraction_range++;
+            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //пробдема в точности вычисления
+        }
         /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
