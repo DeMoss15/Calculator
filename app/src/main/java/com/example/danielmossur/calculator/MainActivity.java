@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                         result_line.setText("result");
                         break;
                     case R.id.redo:
+                        numbers.redo();
                         break;
                     default:
                         numbers.editTailData(Integer.parseInt(((TextView) v).getText().toString()));
@@ -118,6 +119,15 @@ class ListElement{
 class List {
     private ListElement head;       // указатель на первый элемент
     private ListElement tail;       // указатель последний элемент
+
+    void redo()
+    {
+        if (tail.data != null)
+            tail.data = null;
+        else
+            if (tail.operator != ' ')
+                delEl(tail);
+    }
 
     String print()
     {
