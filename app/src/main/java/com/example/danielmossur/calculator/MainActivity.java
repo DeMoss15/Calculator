@@ -13,7 +13,6 @@ public class MainActivity extends AppCompatActivity {
     Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean, redo;
     String output_text;
     List numbers = new List();
-    /*продумать ограничение ввода соответственно типу данных*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +133,7 @@ class List {
         s = s + tail.operator;
         if (tail.data == null)
             return s; //если последний елемент ещё не введен, его не отображать
-        else if (tail.data == 0.0)
+        if (tail.data == 0.0)
         {
             if (!tail.fraction_path)
                 return  s + "0";//если последний елемент равен нулю, но это не дробь
@@ -143,11 +142,15 @@ class List {
                 return s + "0.";
             else
                 return s + "0." + Double.toString(Math.pow(10,tail.fraction_range)).substring(1, tail.fraction_range+1);
-        } else
-        if (t.fraction_path)
-            return s + tail.data;
-        else
-            return s +(int)((double)t.data);
+        } else {
+            if (!tail.fraction_path)
+                return s +(int)((double)t.data);//если последний елемент равен нулю, но это не дробь
+            else
+            if (tail.fraction_range == 0)
+                return s + (int)((double)t.data) + ".";
+            else
+                return s + (int)((double)t.data) + Double.toString(tail.data - (int)((double)t.data)).substring(1, tail.fraction_range+2);
+        }
     }
 
     void fraction()              //проверка дробной части
