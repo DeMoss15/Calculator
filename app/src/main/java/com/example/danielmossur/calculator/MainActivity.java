@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         clean = (Button) findViewById(R.id.clean);
         redo = (Button) findViewById(R.id.redo);
         numbers.addBack(' ');
-        output_text = "";
+        output_text = "введите число";
 
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
@@ -123,6 +123,12 @@ class List {
     {
         ListElement t = head;
         String s = "";
+        if (t.data == null && t.operator == ' ')
+        {
+            clean();
+            return "введите число";
+        }
+
         while (t.next != null){
             if (t.fraction_path)
                 s = s + t.operator + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
@@ -147,6 +153,9 @@ class List {
         } else {
             if (!t.fraction_path)
                 return s +(int)((double)t.data);//это не дробь
+            else
+            if (t.fraction_range == 0)
+                return s + (int)((double)t.data) + ".";
             else
                 return s + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
         }
@@ -203,10 +212,10 @@ class List {
             }
         }
 
-        if (head.data%1 != 0.0)
-            head.fraction_path=true;
+        head.fraction_path = true;
+        head.fraction_range = 6;
         if (head.next == null){
-            return "" + String.format(java.util.Locale.ENGLISH, "%(." + head.fraction_range + "f", head.data);
+            return "" + head.data;
         } else
             return "Ошибка! Undefined Error";
     }
@@ -237,8 +246,12 @@ class List {
             head = a;               //т.е. список теперь состоит из одного элемента
             tail = a;
         } else {
-            tail.next = a;          //иначе "старый" последний элемент теперь ссылается на новый
-            tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
+            if (tail.data == null && tail.operator != ' ')
+                tail.operator = a.operator;
+            else {
+                tail.next = a;          //иначе "старый" последний элемент теперь ссылается на новый
+                tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
+            }
         }
     }
 
