@@ -30,10 +30,38 @@
                 android:layout_weight="1" />
 
             <Button
-                android:text="clean"
+                android:text="="
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/clean"
+                android:id="@+id/equal"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:text="X*(-1)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/reverse"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="X^Y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pow"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="x!"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/factr"
                 android:layout_weight="1" />
         </TableRow>
 
@@ -98,10 +126,10 @@
                 android:layout_weight="1" />
 
             <Button
-                android:text="="
+                android:text="clean"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/equal"
+                android:id="@+id/clean"
                 android:layout_weight="1" />
 
         </TableRow>
@@ -177,7 +205,7 @@
     </TableLayout>
 
     <TextView
-        android:text="@string/out_line"
+        android:text="Enter the number"
         android:textSize="40dp"
         android:textAlignment="textEnd"
         android:layout_width="wrap_content"

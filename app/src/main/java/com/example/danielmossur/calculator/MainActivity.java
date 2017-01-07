@@ -10,7 +10,8 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     TextView textView, result_line;
-    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean, redo;
+    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine,
+            zero, equal, dot, clean, redo, reverse, pow, factr;
     String output_text;
     List numbers = new List();
 
@@ -39,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
         dot = (Button) findViewById(R.id.dot);
         clean = (Button) findViewById(R.id.clean);
         redo = (Button) findViewById(R.id.redo);
+        factr = (Button) findViewById(R.id.factr);
+        pow = (Button) findViewById(R.id.pow);
+        reverse = (Button) findViewById(R.id.reverse);
+        output_text = "Enter the number";
         numbers.addBack(' ');
-        output_text = "введите число";
 
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
@@ -70,6 +74,15 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.clean:
                         numbers.clean();
                         result_line.setText("result");
+                        break;
+                    case R.id.reverse:
+                        numbers.reverse();
+                        break;
+                    case R.id.pow:
+                        numbers.addBack('^');
+                        break;
+                    case R.id.factr:
+                        numbers.factr();
                         break;
                     case R.id.redo:
                         numbers.redo();
@@ -105,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
         dot.setOnClickListener(OnClickListener);
         clean.setOnClickListener(OnClickListener);
         redo.setOnClickListener(OnClickListener);
+        factr.setOnClickListener(OnClickListener);
+        pow.setOnClickListener(OnClickListener);
+        reverse.setOnClickListener(OnClickListener);
     }
 }
 
@@ -119,6 +135,21 @@ class ListElement{
 class List {
     private ListElement head;       // указатель на первый элемент
     private ListElement tail;       // указатель последний элемент
+
+    void factr()
+    {
+        int tmp = 1;
+        for (int i=1; i<=(int)((double)tail.data); i++)
+        {
+            tmp*=i;
+        }
+        tail.data = (double)tmp;
+    }
+
+    void reverse()
+    {
+        tail.data = tail.data*(-1);
+    }
 
     void redo()
     {
@@ -136,7 +167,7 @@ class List {
         if (t.data == null && t.operator == ' ')
         {
             clean();
-            return "введите число";
+            return "Enter the number";
         }
 
         while (t.next != null){
@@ -194,6 +225,11 @@ class List {
 
         ListElement t = head;
         while (t.next != null) {    //пока следующий элемент существует
+            if (t.next.operator == '^')
+            {
+                t.data = Math.pow(t.data, t.next.data);
+                delEl(t.next);
+            } else
             if (t.next.operator == '*') {
                 t.data = t.data * t.next.data;
                 delEl(t.next);
@@ -275,7 +311,7 @@ class List {
         }
     }
 
-    void delEl(ListElement el)          //удаление элемента
+    private void delEl(ListElement el)          //удаление элемента
     {
         if(head == null)        //если список пуст -
             return;             //ничего не делаем
