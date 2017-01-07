@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.redo:
                         break;
                     default:
-                        numbers.editTailData(Double.parseDouble(((TextView) v).getText().toString()));
+                        numbers.editTailData(Integer.parseInt(((TextView) v).getText().toString()));
                 }
                 if (output_text.length() >= 6 && output_text.substring(0, 5).equals("Ошибка"))
                     textView.setText(output_text);
@@ -124,14 +124,30 @@ class List {
     {
         ListElement t = head;
         String s = "";
-        while (t != null){
+        while (t.next != null){
             if (t.fraction_path)
                 s = s + t.operator + t.data;
             else
                 s = s + t.operator + (int)((double)t.data);//костыль)
             t = t.next;
         }
-        return s;
+        s = s + tail.operator;
+        if (tail.data == null)
+            return s; //если последний елемент ещё не введен, его не отображать
+        else if (tail.data == 0.0)
+        {
+            if (!tail.fraction_path)
+                return  s + "0";//если последний елемент равен нулю, но это не дробь
+            else
+            if (tail.fraction_range == 0)
+                return s + "0.";
+            else
+                return s + "0." + Integer.toString(10*tail.fraction_range).substring(1, Integer.toString(10*tail.fraction_range).length());
+        } else
+        if (t.fraction_path)
+            return s + tail.data;
+        else
+            return s +(int)((double)t.data);
     }
 
     void fraction()              //проверка дробной части
@@ -139,27 +155,22 @@ class List {
         tail.fraction_path = true;
     }
 
-    boolean tailZero()
-    {
-        if (tail.data == 0.0)
-            return true;
-        else
-            return false;
-    }
-
     void clean()
     {
         while (head.next != null){
             delEl(head.next);
         }
-        head.data=0.0;
+        head.data=null;
         head.operator=' ';
         head.fraction_path=false;
-        head.fraction_range=1;
+        head.fraction_range=0;
     }
 
     String equals ()
     {
+        if (head.data == null)
+            return "Ошибка! Ничего не введено!";
+
         ListElement t = head;
         while (t.next != null) {    //пока следующий элемент существует
             if (t.next.operator == '*') {
@@ -198,29 +209,26 @@ class List {
             return "Ошибка! Undefined Error";
     }
 
-    void editTailOperator(char operator)
+    void editTailData(int new_number)
     {
-        tail.operator = operator;
-    }
-
-    void editTailData(Double new_number)
-    {
+        if (tail.data == null)
+            tail.data = 0.0;
         if (!tail.fraction_path)
             tail.data = tail.data*10 + new_number;
         else
         {
-            tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
             tail.fraction_range++;
+            tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
         }
     }
 
     void addBack(char operator)       //добавление в конец списка
     {
         ListElement a = new ListElement();  //создаём новый элемент
-        a.data = 0.0;
+        a.data = null;
         a.operator = operator;
         a.fraction_path=false;
-        a.fraction_range = 1;
+        a.fraction_range = 0;
         if (tail == null)           //если список пуст
         {                           //то указываем ссылки начала и конца на новый элемент
             head = a;               //т.е. список теперь состоит из одного элемента
