@@ -142,7 +142,7 @@ class List {
             if (tail.fraction_range == 0)
                 return s + "0.";
             else
-                return s + "0." + Integer.toString(10*tail.fraction_range).substring(1, Integer.toString(10*tail.fraction_range).length());
+                return s + "0." + Double.toString(Math.pow(10,tail.fraction_range)).substring(1, tail.fraction_range+1);
         } else
         if (t.fraction_path)
             return s + tail.data;
@@ -213,13 +213,15 @@ class List {
     {
         if (tail.data == null)
             tail.data = 0.0;
-        if (!tail.fraction_path)
-            tail.data = tail.data*10 + new_number;
-        else
-        {
-            tail.fraction_range++;
-            tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
-        }
+        if (tail.data*10 <= 999999999.0 && tail.fraction_range < 9)
+            if (!tail.fraction_path)
+                tail.data = tail.data*10 + new_number;
+            else
+            {
+                tail.fraction_range++;
+                tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
+            }
+        /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
     void addBack(char operator)       //добавление в конец списка
