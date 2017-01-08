@@ -223,6 +223,9 @@ class List {
         if (head.data == null)
             return "Ошибка! Ничего не введено!";
 
+        if (tail.data == null && tail.operator != ' ')
+            redo();
+
         ListElement t = head;
         while (t.next != null) {    //пока следующий элемент существует
             if (t.next.operator == '^')
