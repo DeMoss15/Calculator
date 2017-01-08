@@ -7,17 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-/*Вся программа стоит на ведении данных через кнопки и выведение через TextView
- * ограничение ввода в onClickListener'e
- * математика же прописана через односвязный список */
-
 public class MainActivity extends AppCompatActivity {
 
-    TextView textView;
-    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine, zero, equal, dot, clean;
+    TextView textView, result_line;
+    Button plus, minus, multiple, division, one, two, three, four, five, six, seven, eight, nine,
+            zero, equal, dot, clean, redo, reverse, pow, factr;
+    String output_text;
     List numbers = new List();
-    /*продумать ограничение ввода соответственно типу данных*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.textView);
+        result_line = (TextView) findViewById(R.id.result_line);
         plus = (Button) findViewById(R.id.plus);
         minus = (Button) findViewById(R.id.minus);
         multiple = (Button) findViewById(R.id.multiple);
@@ -42,12 +39,13 @@ public class MainActivity extends AppCompatActivity {
         equal = (Button) findViewById(R.id.equal);
         dot = (Button) findViewById(R.id.dot);
         clean = (Button) findViewById(R.id.clean);
-        numbers.addBack('+');
+        redo = (Button) findViewById(R.id.redo);
+        factr = (Button) findViewById(R.id.factr);
+        pow = (Button) findViewById(R.id.pow);
+        reverse = (Button) findViewById(R.id.reverse);
+        output_text = "Enter the number";
+        numbers.addBack(' ');
 
-        /*убрать все textView.setText из литснера, остапить только один, после свича
-        * текст реализовать через стринг!!!!*
-        *
-        * придумать одноразовую запись числа*/
         View.OnClickListener OnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,39 +54,47 @@ public class MainActivity extends AppCompatActivity {
                 }
                 switch (v.getId()) {
                     case R.id.plus:
-                        addSymb('+');
+                        numbers.addBack('+');
                         break;
                     case R.id.minus:
-                        addSymb('-');
+                        numbers.addBack('-');
                         break;
                     case R.id.multiple:
-                        addSymb('*');
+                        numbers.addBack('*');
                         break;
                     case R.id.division:
-                        addSymb('/');
+                        numbers.addBack('/');
                         break;
                     case R.id.dot:
-                        if (textView.getText().length() != 0 &&
-                                Character.isDigit(textView.getText().charAt(textView.getText().length() - 1)) &&
-                                !numbers.fraction(true)) {
-                            textView.setText(textView.getText() + ".");
-                        }
+                        numbers.fraction();
                         break;
                     case R.id.equal:
-                        textView.setText(numbers.equals());
+                        result_line.setText(numbers.equals());
                         break;
                     case R.id.clean:
-                        textView.setText("");
                         numbers.clean();
+                        result_line.setText("result");
+                        break;
+                    case R.id.reverse:
+                        numbers.reverse();
+                        break;
+                    case R.id.pow:
+                        numbers.addBack('^');
+                        break;
+                    case R.id.factr:
+                        numbers.factr();
+                        break;
+                    case R.id.redo:
+                        numbers.redo();
                         break;
                     default:
-                        if (numbers.tailZero() && !numbers.fraction(false) &&
-                                (textView.getText().length() != 0) &&
-                                ((textView.getText().charAt(textView.getText().length() - 1)) == '0'))
-                            textView.setText(textView.getText().toString().substring(0, textView.getText().length() - 1) + ((TextView) v).getText().toString());
-                        else
-                            textView.setText(textView.getText() + ((TextView) v).getText().toString());
-                        numbers.editTailData(Double.parseDouble(((TextView) v).getText().toString()));
+                        numbers.editTailData(Integer.parseInt(((TextView) v).getText().toString()));
+                }
+                if (output_text.length() >= 6 && output_text.substring(0, 5).equals("Ошибка"))
+                    textView.setText(output_text);
+                else {
+                    output_text = numbers.print();
+                    textView.setText(output_text);
                 }
             }
         };
@@ -111,20 +117,11 @@ public class MainActivity extends AppCompatActivity {
         equal.setOnClickListener(OnClickListener);
         dot.setOnClickListener(OnClickListener);
         clean.setOnClickListener(OnClickListener);
+        redo.setOnClickListener(OnClickListener);
+        factr.setOnClickListener(OnClickListener);
+        pow.setOnClickListener(OnClickListener);
+        reverse.setOnClickListener(OnClickListener);
     }
-
-    public void addSymb(char ch) {
-        /*при вооде нового знака создавать новый элеметн списка и вносить вводимый знак в этот элемент*/
-        if (textView.getText().length() == 0) return;
-        CharSequence s = textView.getText();
-        if (Character.isDigit(s.charAt(s.length()-1))) {
-            textView.setText(s + "" + ch);
-            numbers.addBack(ch);
-        } else { //иначе, если требуется замена оператора, его замена в строке и в последнем элементе
-            textView.setText(s.toString().substring(0, s.length()-1) + ch);
-            numbers.editTailOperator(ch);
-        }
-    };
 }
 
 class ListElement{
@@ -139,22 +136,75 @@ class List {
     private ListElement head;       // указатель на первый элемент
     private ListElement tail;       // указатель последний элемент
 
-    boolean fraction(boolean i)              //проверка дробной части
+    void factr()
     {
-        boolean x = tail.fraction_path;
-        if (i)
+        int tmp = 1;
+        for (int i=1; i<=(int)((double)tail.data); i++)
         {
-            tail.fraction_path = true;
+            tmp*=i;
         }
-        return x;
+        tail.data = (double)tmp;
     }
 
-    boolean tailZero()
+    void reverse()
     {
-        if (tail.data == 0.0)
-            return true;
+        tail.data = tail.data*(-1);
+    }
+
+    void redo()
+    {
+        if (tail.data != null)
+            tail.data = null;
         else
-            return false;
+            if (tail.operator != ' ')
+                delEl(tail);
+    }
+
+    String print()
+    {
+        ListElement t = head;
+        String s = "";
+        if (t.data == null && t.operator == ' ')
+        {
+            clean();
+            return "Enter the number";
+        }
+
+        while (t.next != null){
+            if (t.fraction_path)
+                s = s + t.operator + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
+            else
+                s = s + t.operator + (int)((double)t.data);//костыль)
+            t = t.next;
+        }
+
+        s = s + t.operator;
+
+        if (t.data == null)
+            return s; //если последний елемент ещё не введен, его не отображать
+        if (t.data == 0.0)
+        {
+            if (!t.fraction_path)
+                return  s + "0";//если последний елемент равен нулю, но это не дробь
+            else
+            if (t.fraction_range == 0)
+                return s + "0.";
+            else
+                return s + String.format(java.util.Locale.ENGLISH, "%(." + (t.fraction_range) + "f", 0.0);
+        } else {
+            if (!t.fraction_path)
+                return s +(int)((double)t.data);//это не дробь
+            else
+            if (t.fraction_range == 0)
+                return s + (int)((double)t.data) + ".";
+            else
+                return s + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
+        }
+    }
+
+    void fraction()              //проверка дробной части
+    {
+        tail.fraction_path = true;
     }
 
     void clean()
@@ -162,16 +212,27 @@ class List {
         while (head.next != null){
             delEl(head.next);
         }
-        head.data=0.0;
-        head.operator='+';
+        head.data=null;
+        head.operator=' ';
         head.fraction_path=false;
-        head.fraction_range=1;
+        head.fraction_range=0;
     }
 
     String equals ()
     {
+        if (head.data == null)
+            return "Ошибка! Ничего не введено!";
+
+        if (tail.data == null && tail.operator != ' ')
+            redo();
+
         ListElement t = head;
         while (t.next != null) {    //пока следующий элемент существует
+            if (t.next.operator == '^')
+            {
+                t.data = Math.pow(t.data, t.next.data);
+                delEl(t.next);
+            } else
             if (t.next.operator == '*') {
                 t.data = t.data * t.next.data;
                 delEl(t.next);
@@ -200,42 +261,46 @@ class List {
             }
         }
 
+        head.fraction_path = true;
+        head.fraction_range = 6;
         if (head.next == null){
             return "" + head.data;
         } else
-            return "Undefined Error";
+            return "Ошибка! Undefined Error";
     }
 
-    void editTailOperator(char operator)
+    void editTailData(int new_number)
     {
-        tail.operator = operator;
-    }
-
-    void editTailData(Double new_number)
-    {
-        if (!tail.fraction_path)
+        if (tail.data == null)
+            tail.data = 0.0;
+        if (!tail.fraction_path && tail.data*10 <= 9999999.0)
             tail.data = tail.data*10 + new_number;
-        else
+        else if(tail.fraction_range < 6)
         {
-            tail.data = tail.data + new_number/Math.pow(10,tail.fraction_range);
             tail.fraction_range++;
+            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //пробдема в точности вычисления
         }
+        /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
     void addBack(char operator)       //добавление в конец списка
     {
         ListElement a = new ListElement();  //создаём новый элемент
-        a.data = 0.0;
+        a.data = null;
         a.operator = operator;
         a.fraction_path=false;
-        a.fraction_range = 1;
+        a.fraction_range = 0;
         if (tail == null)           //если список пуст
         {                           //то указываем ссылки начала и конца на новый элемент
             head = a;               //т.е. список теперь состоит из одного элемента
             tail = a;
         } else {
-            tail.next = a;          //иначе "старый" последний элемент теперь ссылается на новый
-            tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
+            if (tail.data == null && tail.operator != ' ')
+                tail.operator = a.operator;
+            else {
+                tail.next = a;          //иначе "старый" последний элемент теперь ссылается на новый
+                tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
+            }
         }
     }
 
@@ -249,7 +314,7 @@ class List {
         }
     }
 
-    void delEl(ListElement el)          //удаление элемента
+    private void delEl(ListElement el)          //удаление элемента
     {
         if(head == null)        //если список пуст -
             return;             //ничего не делаем
