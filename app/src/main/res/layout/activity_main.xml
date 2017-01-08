@@ -8,9 +8,9 @@
     tools:context="com.example.danielmossur.calculator.MainActivity">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/megamind"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/megamind"
         android:scaleType="centerCrop"
         android:id="@+id/imageView2" />
 
@@ -54,7 +54,7 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="225dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:id="@+id/tableLayout">
@@ -65,6 +65,14 @@
                 android:layout_weight="1">
 
                 <Button
+                    android:text="clean"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/clean"
+                    android:layout_weight="1"
+                    style="@style/Widget.AppCompat.Button.Colored" />
+
+                <Button
                     android:text="back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -72,15 +80,6 @@
                     android:layout_weight="1"
                     style="@style/Widget.AppCompat.Button.Colored"
                     tools:style="@style/buttonStyle" />
-
-                <Button
-                    android:text="="
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/equal"
-                    android:layout_weight="1"
-                    tools:style="@style/Widget.AppCompat.Button.Colored"
-                    style="@style/Widget.AppCompat.Button.Colored" />
 
             </TableRow>
 
@@ -182,11 +181,12 @@
                     style="@style/Widget.AppCompat.Button.Colored" />
 
                 <Button
-                    android:text="clean"
+                    android:text="="
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/clean"
+                    android:id="@+id/equal"
                     android:layout_weight="1"
+                    tools:style="@style/Widget.AppCompat.Button.Colored"
                     style="@style/Widget.AppCompat.Button.Colored" />
 
             </TableRow>
