@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView textView, result_line;
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 class ListElement{
     ListElement next;
-    Double data;
+    BigDecimal data;
     char operator;
     int fraction_range;
     boolean fraction_path;
@@ -141,17 +144,17 @@ class List {
         if(tail.data == null)
             return;
         int tmp = 1;
-        for (int i=1; i<=(int)((double)tail.data); i++)
+        for (int i=1; i<=tail.data.intValue(); i++)
         {
             tmp*=i;
         }
-        tail.data = (double)tmp;
+        tail.data = new BigDecimal(Integer.toString(tmp));
     }
 
     void reverse()
     {
         if(tail.data != null)
-            tail.data = tail.data*(-1);
+            tail.data.negate();
         else
             return;
     }
@@ -176,35 +179,10 @@ class List {
         }
 
         while (t.next != null){
-            if (t.fraction_path)
-                s = s + t.operator + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
-            else
-                s = s + t.operator + (int)((double)t.data);//костыль)
+            s = s + t.operator + t.data;
             t = t.next;
         }
-
-        s = s + t.operator;
-
-        if (t.data == null)
-            return s; //если последний елемент ещё не введен, его не отображать
-        if (t.data == 0.0)
-        {
-            if (!t.fraction_path)
-                return  s + "0";//если последний елемент равен нулю, но это не дробь
-            else
-            if (t.fraction_range == 0)
-                return s + "0.";
-            else
-                return s + String.format(java.util.Locale.ENGLISH, "%(." + (t.fraction_range) + "f", 0.0);
-        } else {
-            if (!t.fraction_path)
-                return s +(int)((double)t.data);//это не дробь
-            else
-            if (t.fraction_range == 0)
-                return s + (int)((double)t.data) + ".";
-            else
-                return s + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
-        }
+        return s + t.operator + t.data;
     }
 
     void fraction()              //проверка дробной части
@@ -235,16 +213,16 @@ class List {
         while (t.next != null) {    //пока следующий элемент существует
             if (t.next.operator == '^')
             {
-                t.data = Math.pow(t.data, t.next.data);
+                t.data = new BigDecimal(Math.pow(t.data.doubleValue(), t.next.data.doubleValue()));
                 delEl(t.next);
             } else
             if (t.next.operator == '*') {
-                t.data = t.data * t.next.data;
+                t.data = t.data.multiply(t.next.data);
                 delEl(t.next);
             } else
             if (t.next.operator == '/') {
-                if (t.next.data != 0.0){
-                    t.data = t.data / t.next.data;
+                if (t.next.data.doubleValue() != 0.0){
+                    t.data = t.data.divide(t.next.data);
                     delEl(t.next);
                 } else
                     return "Ошибка! Деление на ноль!";
@@ -255,12 +233,12 @@ class List {
         t = head;
         while (t.next != null) {
             if (t.next.operator == '+') {
-                t.data = t.data + t.next.data;
+                t.data = t.data.add(t.next.data);
                 delEl(t.next);
             } else
             if (t.next.operator == '-') {
-                if (t.next.data != 0.0) {
-                    t.data = t.data - t.next.data;
+                if (t.next.data.doubleValue() != 0.0) {
+                    t.data = t.data.add(t.next.data.negate());
                     delEl(t.next);
                 }
             }
@@ -277,13 +255,13 @@ class List {
     void editTailData(int new_number)
     {
         if (tail.data == null)
-            tail.data = 0.0;
-        if (!tail.fraction_path && tail.data*10 <= 9999999.0)
-            tail.data = tail.data*10 + new_number;
+            tail.data = new BigDecimal(0.0);
+        if (!tail.fraction_path && tail.data.multiply(new BigDecimal(10)).doubleValue() <= 9999999.0)
+            tail.data = tail.data.multiply(new BigDecimal(10)).add(new BigDecimal(new_number));
         else if(tail.fraction_range < 6)
         {
             tail.fraction_range++;
-            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //пробдема в точности вычисления
+            tail.data = tail.data.add(new BigDecimal(new_number*Math.pow(0.1, tail.fraction_range))); //пробдема в точности вычисления
         }
         /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
