@@ -138,6 +138,8 @@ class List {
 
     void factr()
     {
+        if(tail.data == null)
+            return;
         int tmp = 1;
         for (int i=1; i<=(int)((double)tail.data); i++)
         {
@@ -148,7 +150,10 @@ class List {
 
     void reverse()
     {
-        tail.data = tail.data*(-1);
+        if(tail.data != null)
+            tail.data = tail.data*(-1);
+        else
+            return;
     }
 
     void redo()
