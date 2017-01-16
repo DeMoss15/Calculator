@@ -143,6 +143,21 @@ class List {
             tail.data += "!";
     }
 
+    private void factr_math(ListElement a){
+        if (a.data.contains("!")){ //факториал
+            int tmp = 1, n = Integer.parseInt(a.data.substring(0, a.data.length()-1));
+            if (n>12){
+                a.data = a.data.substring(0, a.data.length()-1);
+                return; //здесь будет тост о точности вычислений
+            }
+            for (int i=1; i<=n; i++)
+            {
+                tmp *= i;
+            }
+            a.data = "" + tmp;
+        }
+    }
+
     void reverse()
     {
         if(tail.data != null)
@@ -213,15 +228,11 @@ class List {
             redo();
 
         ListElement t = head;
+
+        factr_math(t);
+
         while (t.next != null) {    //пока следующий элемент существует
-            if (t.data.contains("!")){ //факториал
-                int tmp = 1;
-                for (int i=1; i<=(int)(Double.parseDouble(t.data.substring(0, t.data.length()-1))); i++)
-                {
-                    tmp *= i;
-                }
-                t.data = "" + tmp;
-            }
+            factr_math(t);
             if (t.next.operator == '^')
             {
                 t.data = "" + Math.pow(Double.parseDouble(t.data), Double.parseDouble(t.next.data));
