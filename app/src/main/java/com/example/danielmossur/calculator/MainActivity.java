@@ -65,9 +65,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.division:
                         numbers.addBack('/');
                         break;
-                    case R.id.dot:
-                        numbers.fraction();
-                        break;
                     case R.id.equal:
                         result_line.setText(numbers.equals());
                         break;
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         numbers.redo();
                         break;
                     default:
-                        numbers.editTailData(Integer.parseInt(((TextView) v).getText().toString()));
+                        numbers.editTailData(((TextView) v).getText().toString());
                 }
                 if (output_text.length() >= 6 && output_text.substring(0, 5).equals("Ошибка"))
                     textView.setText(output_text);
@@ -126,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
 class ListElement{
     ListElement next;
-    Double data;
+    String data;
     char operator;
     int fraction_range;
     boolean fraction_path;
@@ -138,28 +135,31 @@ class List {
 
     void factr()
     {
-        if(tail.data == null)
+        if (tail.data == null || tail.data.equals(""))
             return;
-        int tmp = 1;
-        for (int i=1; i<=(int)((double)tail.data); i++)
-        {
-            tmp*=i;
-        }
-        tail.data = (double)tmp;
+        if(tail.data.contains("!"))
+            tail.data = tail.data.substring(0, tail.data.length()-1);
+        else
+            tail.data += "!";
     }
 
     void reverse()
     {
         if(tail.data != null)
-            tail.data = tail.data*(-1);
-        else
-            return;
+            if (tail.data.contains("-"))
+                tail.data = tail.data.substring(1);
+            else
+                tail.data = "-" + tail.data;
     }
 
     void redo()
     {
         if (tail.data != null)
-            tail.data = null;
+            if (tail.data.equals("") || (tail.data.contains("-") && tail.data.length() == 2))
+                tail.data = null;
+            else
+                tail.data = tail.data.substring(0,tail.data.length()-1);
+
         else
             if (tail.operator != ' ')
                 delEl(tail);
@@ -176,38 +176,19 @@ class List {
         }
 
         while (t.next != null){
-            if (t.fraction_path)
-                s = s + t.operator + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
-            else
-                s = s + t.operator + (int)((double)t.data);//костыль)
+            s += t.operator + t.data;
             t = t.next;
         }
 
-        s = s + t.operator;
+        if (t.data != null)
+            s += t.operator + t.data;
+        else
+            s += t.operator;
 
-        if (t.data == null)
-            return s; //если последний елемент ещё не введен, его не отображать
-        if (t.data == 0.0)
-        {
-            if (!t.fraction_path)
-                return  s + "0";//если последний елемент равен нулю, но это не дробь
-            else
-            if (t.fraction_range == 0)
-                return s + "0.";
-            else
-                return s + String.format(java.util.Locale.ENGLISH, "%(." + (t.fraction_range) + "f", 0.0);
-        } else {
-            if (!t.fraction_path)
-                return s +(int)((double)t.data);//это не дробь
-            else
-            if (t.fraction_range == 0)
-                return s + (int)((double)t.data) + ".";
-            else
-                return s + String.format(java.util.Locale.ENGLISH, "%(." + t.fraction_range + "f", t.data);
-        }
+        return s;
     }
 
-    void fraction()              //проверка дробной части
+    private void fraction()              //добавление точки
     {
         tail.fraction_path = true;
     }
@@ -233,18 +214,26 @@ class List {
 
         ListElement t = head;
         while (t.next != null) {    //пока следующий элемент существует
+            if (t.data.contains("!")){ //факториал
+                int tmp = 1;
+                for (int i=1; i<=(int)(Double.parseDouble(t.data.substring(0, t.data.length()-1))); i++)
+                {
+                    tmp *= i;
+                }
+                t.data = "" + tmp;
+            }
             if (t.next.operator == '^')
             {
-                t.data = Math.pow(t.data, t.next.data);
+                t.data = "" + Math.pow(Double.parseDouble(t.data), Double.parseDouble(t.next.data));
                 delEl(t.next);
             } else
             if (t.next.operator == '*') {
-                t.data = t.data * t.next.data;
+                t.data = "" + (Double.parseDouble(t.data) * Double.parseDouble(t.next.data));
                 delEl(t.next);
             } else
             if (t.next.operator == '/') {
-                if (t.next.data != 0.0){
-                    t.data = t.data / t.next.data;
+                if (Double.parseDouble(t.next.data) != 0.0){
+                    t.data = "" + (Double.parseDouble(t.data) / Double.parseDouble(t.next.data));
                     delEl(t.next);
                 } else
                     return "Ошибка! Деление на ноль!";
@@ -255,37 +244,41 @@ class List {
         t = head;
         while (t.next != null) {
             if (t.next.operator == '+') {
-                t.data = t.data + t.next.data;
+                t.data = "" + (Double.parseDouble(t.data) + Double.parseDouble(t.next.data));
                 delEl(t.next);
             } else
             if (t.next.operator == '-') {
-                if (t.next.data != 0.0) {
-                    t.data = t.data - t.next.data;
+                if (Double.parseDouble(t.next.data) != 0.0) {
+                    t.data = "" + (Double.parseDouble(t.data) - Double.parseDouble(t.next.data));
                     delEl(t.next);
                 }
             }
         }
 
-        head.fraction_path = true;
-        head.fraction_range = 6;
         if (head.next == null){
-            return "" + head.data;
+            return head.data;
         } else
             return "Ошибка! Undefined Error";
     }
 
-    void editTailData(int new_number)
+    void editTailData(String new_number)
     {
-        if (tail.data == null) //если последний элемент не инициализирован
-            tail.data = 0.0;
-        if (!tail.fraction_path && tail.data*10 <= 9999999.0) // иначе, если можно увеличить целое значение
-            tail.data = tail.data*10 + new_number;
-        if(tail.fraction_path && tail.fraction_range < 6) //если нужно увеличить дробную часть
-        {
-            tail.fraction_range++;
-            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //проблема в точности вычисления
-        } else return;
-        /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
+        if (tail.data == null)
+            tail.data = "";
+
+        if (new_number.equals(".")){
+            if (!tail.fraction_path){
+                tail.data += new_number;
+                fraction();
+            }
+            return;
+        }
+
+        if ((!tail.fraction_path && tail.data.length()<12)
+                || (tail.fraction_path && tail.data.substring(tail.data.indexOf('.')).length()<=3))
+            tail.data += new_number;
+        else
+            return;/*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
     void addBack(char operator)       //добавление в конец списка
@@ -306,16 +299,6 @@ class List {
                 tail.next = a;          //иначе "старый" последний элемент теперь ссылается на новый
                 tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
             }
-        }
-    }
-
-    void printList()                //печать списка
-    {
-        ListElement t = head;       //получаем ссылку на первый элемент
-        while (t != null)           //пока элемент существуе
-        {
-            System.out.print(t.data + " "); //печатаем его данные
-            t = t.next;                     //и переключаемся на следующий
         }
     }
 
