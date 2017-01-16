@@ -3,6 +3,8 @@ package com.example.danielmossur.calculator;
 import android.content.Context;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 /**
  * Created by Daniel Mossur on 16.01.2017.
  */
@@ -26,24 +28,6 @@ public class List {
             tail.data = tail.data.substring(0, tail.data.length()-1);
         else
             tail.data += "!";
-    }
-
-    private void factr_math(ListElement a){
-        if (a.data.contains("!")){ //факториал
-            int tmp = 1, n = Integer.parseInt(a.data.substring(0, a.data.length()-1));
-            if (n>12){
-                a.data = a.data.substring(0, a.data.length()-1);
-                text = "Факториал больше 12 взять тяжело! \nВот результат без факториала:";
-                toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-                toast.show();
-                return; //здесь будет тост о точности вычислений
-            }
-            for (int i=1; i<=n; i++)
-            {
-                tmp *= i;
-            }
-            a.data = "" + tmp;
-        }
     }
 
     void reverse()
@@ -79,21 +63,20 @@ public class List {
         }
 
         while (t.next != null){
-            s += t.operator + t.data;
+            s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
             t = t.next;
         }
 
         if (t.data != null)
-            s += t.operator + t.data;
+            s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
         else
             s += t.operator;
 
-        return s;
-    }
+        if (t.fraction_path && t.fraction_range == 0){
+            s += ",";
+        }
 
-    private void fraction()              //добавление точки
-    {
-        tail.fraction_path = true;
+        return s;
     }
 
     void clean()
@@ -154,6 +137,8 @@ public class List {
             }
         }
 
+        head.fraction_range = tail.data.substring(tail.data.indexOf('.'),tail.data.length()-1).length();
+
         if (head.next == null){
             return head.data;
         } else
@@ -173,6 +158,8 @@ public class List {
             return;
         }
 
+        if(tail.fraction_path && tail.fraction_range<5)
+            tail.fraction_range++;
         if ((!tail.fraction_path && tail.data.length()<9)
                 || (tail.fraction_path && tail.data.substring(tail.data.indexOf('.')).length()<=5))
             tail.data += new_number;
@@ -181,7 +168,6 @@ public class List {
             toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
             toast.show();
         }
-            return;/*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
     void addBack(char operator)       //добавление в конец списка
@@ -203,6 +189,30 @@ public class List {
                 tail = a;               //а в указатель на последний элемент записываем адрес нового элемента
             }
         }
+    }
+
+    private void factr_math(ListElement a)
+    {
+        if (a.data.contains("!")){ //факториал
+            int tmp = 1, n = Integer.parseInt(a.data.substring(0, a.data.length()-1));
+            if (n>12){
+                a.data = a.data.substring(0, a.data.length()-1);
+                text = "Факториал больше 12 взять тяжело! \nВот результат без факториала:";
+                toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+                toast.show();
+                return; //здесь будет тост о точности вычислений
+            }
+            for (int i=1; i<=n; i++)
+            {
+                tmp *= i;
+            }
+            a.data = "" + tmp;
+        }
+    }
+
+    private void fraction()              //добавление точки
+    {
+        tail.fraction_path = true;
     }
 
     private void delEl(ListElement el)          //удаление элемента
