@@ -276,15 +276,15 @@ class List {
 
     void editTailData(int new_number)
     {
-        if (tail.data == null)
+        if (tail.data == null) //если последний элемент не инициализирован
             tail.data = 0.0;
-        if (!tail.fraction_path && tail.data*10 <= 9999999.0)
+        if (!tail.fraction_path && tail.data*10 <= 9999999.0) // иначе, если можно увеличить целое значение
             tail.data = tail.data*10 + new_number;
-        else if(tail.fraction_range < 6)
+        if(tail.fraction_path && tail.fraction_range < 6) //если нужно увеличить дробную часть
         {
             tail.fraction_range++;
-            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //пробдема в точности вычисления
-        }
+            tail.data = tail.data + (Double)(new_number*Math.pow(0.1, tail.fraction_range)); //проблема в точности вычисления
+        } else return;
         /*тут должен быть тост, предупреждающий об ограниченоом вводе в одно слагаемое*/
     }
 
