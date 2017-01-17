@@ -9,5 +9,4 @@ class ListElement{
     String data;
     char operator;
     int fraction_range;
-    boolean fraction_path;
 }

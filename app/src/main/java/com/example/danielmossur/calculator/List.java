@@ -39,21 +39,18 @@ public class List {
                 tail.data = "-" + tail.data;
     }
 
-    void redo()
-    {
-        if (tail.fraction_range > 0)
+    void redo() {
+        if (tail.fraction_range >= 0)
             tail.fraction_range--;
-        if (tail.fraction_range == 0 && tail.fraction_path){
-            tail.fraction_path = false;
-            tail.data = tail.data.substring(0,tail.data.length()-1);
-        }
-        if (tail.data != null)
+        if (tail.data != null){
             if (tail.data.length() < 2 || (tail.data.contains("-") && tail.data.length() == 2))
                 tail.data = null;
             else
-                tail.data = tail.data.substring(0,tail.data.length()-1);
+                tail.data = tail.data.substring(0, tail.data.length() - 1);
 
-        else
+            if (tail.fraction_range < 0 && tail.data != null && tail.data.endsWith("."))
+                tail.data = tail.data.substring(0, tail.data.length() - 1);
+        } else
         if (tail.operator != ' ')
             delEl(tail);
     }
@@ -68,18 +65,17 @@ public class List {
             return "Enter the number";
         }
 
-        while (t.next != null){
-            s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
+        while (t != null){
+            if (t.data != null)
+                if (t.fraction_range >= 0)
+                    s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
+                else s += t.operator + String.format(Locale.getDefault(),"%,d",Integer.parseInt(t.data));
+            else
+                s += t.operator;
+            if (t.fraction_range == 0){
+                s += ",";
+            }
             t = t.next;
-        }
-
-        if (t.data != null)
-            s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
-        else
-            s += t.operator;
-
-        if (t.fraction_path && t.fraction_range == 0){
-            s += ",";
         }
 
         return s;
@@ -90,10 +86,9 @@ public class List {
         while (head.next != null){
             delEl(head.next);
         }
-        head.data=null;
-        head.operator=' ';
-        head.fraction_path=false;
-        head.fraction_range=0;
+        head.data = null;
+        head.operator = ' ';
+        head.fraction_range = -1;
     }
 
     String equals ()
@@ -144,9 +139,13 @@ public class List {
         }
 
         if (head.data.contains(".")) {
-            head.fraction_path = true;
-            head.fraction_range = 6;
-            head.data = head.data.substring(0, head.data.indexOf('.')+7);
+            if (head.data.substring(head.data.indexOf('.')).length()>6)
+            {
+                head.fraction_range = 6;
+                head.data = head.data.substring(0, head.data.indexOf('.')+7);
+            } else {
+                head.fraction_range = head.data.substring(head.data.indexOf('.')).length()-1;
+            }
         }
 
         if (head.next == null){
@@ -161,17 +160,17 @@ public class List {
             tail.data = "";
 
         if (new_number.equals(".")){
-            if (!tail.fraction_path){
+            if (tail.fraction_range < 0){
                 tail.data += new_number;
-                fraction();
+                tail.fraction_range++;
             }
             return;
         }
 
-        if(tail.fraction_path && tail.fraction_range<5)
+        if(tail.fraction_range >= 0 && tail.fraction_range<5)
             tail.fraction_range++;
-        if ((!tail.fraction_path && tail.data.length()<9)
-                || (tail.fraction_path && tail.data.substring(tail.data.indexOf('.')).length()<=5))
+        if ((tail.fraction_range < 0 && tail.data.length()<9)
+                || (tail.fraction_range >= 0 && tail.data.substring(tail.data.indexOf('.')).length()<=5))
             tail.data += new_number;
         else{
             text = "Слишком много цифр!";
@@ -185,8 +184,7 @@ public class List {
         ListElement a = new ListElement();  //создаём новый элемент
         a.data = null;
         a.operator = operator;
-        a.fraction_path=false;
-        a.fraction_range = 0;
+        a.fraction_range = -1;
         if (tail == null)           //если список пуст
         {                           //то указываем ссылки начала и конца на новый элемент
             head = a;               //т.е. список теперь состоит из одного элемента
@@ -218,11 +216,6 @@ public class List {
             }
             a.data = "" + tmp;
         }
-    }
-
-    private void fraction()              //добавление точки
-    {
-        tail.fraction_path = true;
     }
 
     private void delEl(ListElement el)          //удаление элемента
