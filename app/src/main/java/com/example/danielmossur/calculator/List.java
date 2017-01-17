@@ -137,10 +137,7 @@ public class List {
             }
         }
 
-        if (tail.data.substring(tail.data.indexOf('.'),tail.data.length()-1).length() <6)
-            head.fraction_range = tail.data.substring(tail.data.indexOf('.'),tail.data.length()-1).length();
-        else
-            head.fraction_range = 6;
+        head.fraction_range = tail.data.substring(tail.data.indexOf('.'),tail.data.length()-1).length();
 
         if (head.next == null){
             return head.data;
