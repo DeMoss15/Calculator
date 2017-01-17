@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         numbers.addBack('^');
                         break;
                     case R.id.factr:
-                        numbers.factr();
+                        numbers.factorial();
                         break;
                     case R.id.redo:
                         numbers.redo();

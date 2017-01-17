@@ -20,14 +20,11 @@ public class List {
         context = a;
     }
 
-    void factr()
+    void factorial()
     {
         if (tail.data == null || tail.data.equals(""))
             return;
-        if(tail.data.contains("!"))
-            tail.data = tail.data.substring(0, tail.data.length()-1);
-        else
-            tail.data += "!";
+        tail.factorial = !tail.factorial;
     }
 
     void reverse()
@@ -40,6 +37,10 @@ public class List {
     }
 
     void redo() {
+        if (tail.factorial){
+            factorial();
+            return;
+        }
         if (tail.fraction_range >= 0)
             tail.fraction_range--;
         if (tail.data != null){
@@ -66,11 +67,14 @@ public class List {
         }
 
         while (t != null){
-            if (t.data != null)
+            if (t.data != null) {
                 if (t.fraction_range >= 0)
-                    s += t.operator + String.format(Locale.getDefault(),"%,."+t.fraction_range+"f",Double.parseDouble(t.data));
-                else s += t.operator + String.format(Locale.getDefault(),"%,d",Integer.parseInt(t.data));
-            else
+                    s += t.operator + String.format(Locale.getDefault(), "%,." + t.fraction_range + "f", Double.parseDouble(t.data));
+                else
+                    s += t.operator + String.format(Locale.getDefault(), "%,d", Integer.parseInt(t.data));
+                if (t.factorial)
+                    s += "!";
+            } else
                 s += t.operator;
             if (t.fraction_range == 0){
                 s += ",";
@@ -89,6 +93,7 @@ public class List {
         head.data = null;
         head.operator = ' ';
         head.fraction_range = -1;
+        head.factorial = false;
     }
 
     String equals ()
@@ -101,10 +106,14 @@ public class List {
 
         ListElement t = head;
 
-        factr_math(t);
+        while (t != null) {
+            factr_math(t);
+            t = t.next;
+        }
+        
+        t = head;
 
         while (t.next != null) {    //пока следующий элемент существует
-            factr_math(t);
             if (t.next.operator == '^')
             {
                 t.data = "" + Math.pow(Double.parseDouble(t.data), Double.parseDouble(t.next.data));
@@ -185,6 +194,7 @@ public class List {
         a.data = null;
         a.operator = operator;
         a.fraction_range = -1;
+        a.factorial = false;
         if (tail == null)           //если список пуст
         {                           //то указываем ссылки начала и конца на новый элемент
             head = a;               //т.е. список теперь состоит из одного элемента
@@ -201,10 +211,10 @@ public class List {
 
     private void factr_math(ListElement a)
     {
-        if (a.data.contains("!")){ //факториал
-            int tmp = 1, n = Integer.parseInt(a.data.substring(0, a.data.length()-1));
+        if (a.factorial){ //факториал
+            int tmp = 1, n = Integer.parseInt(a.data);
             if (n>12){
-                a.data = a.data.substring(0, a.data.length()-1);
+                a.factorial = !a.factorial;
                 text = "Факториал больше 12 взять тяжело! \nВот результат без факториала:";
                 toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
                 toast.show();
@@ -215,6 +225,7 @@ public class List {
                 tmp *= i;
             }
             a.data = "" + tmp;
+            a.factorial = !a.factorial;
         }
     }
 
