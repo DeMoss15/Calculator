@@ -25,6 +25,33 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
+        <TextView
+            android:text="result"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/result_line"
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/colorText"
+            android:textColorHighlight="?attr/colorControlHighlight" />
+
+        <TextView
+            android:text="Enter the number"
+            android:textSize="40dp"
+            android:textAlignment="textEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="225dp"
+            android:id="@+id/textView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/tableLayout"
+            android:textColor="@color/colorText"
+            android:textColorHighlight="?attr/colorControlHighlight"
+            tools:textColorHighlight="?android:attr/colorControlHighlight" />
+
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="225dp"
@@ -241,44 +268,6 @@
 
             </TableRow>
         </TableLayout>
-
-        <TextView
-            android:text="Enter the number"
-            android:textSize="40dp"
-            android:textAlignment="textEnd"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/textView"
-            android:textColor="@color/colorText"
-            android:textColorHighlight="?attr/colorControlHighlight"
-            tools:textColorHighlight="?android:attr/colorControlHighlight"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/textView3" />
-
-        <TextView
-            android:text="Last result : "
-            android:textSize="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView3"
-            android:layout_above="@+id/tableLayout"
-            android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/result_line"
-            android:textColor="@color/colorText"
-            android:textColorHighlight="?attr/colorControlHighlight"
-            tools:textColorHighlight="?android:attr/colorControlHighlight"/>
-
-        <TextView
-            android:text=""
-            android:textSize="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/result_line"
-            android:textColor="@color/colorText"
-            android:textColorHighlight="?attr/colorControlHighlight"
-            android:layout_above="@+id/tableLayout"
-            android:layout_toEndOf="@+id/textView3" />
     </RelativeLayout>
 
 </RelativeLayout>

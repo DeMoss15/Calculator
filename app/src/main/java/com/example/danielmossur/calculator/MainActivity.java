@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.clean:
                         numbers.clean();
-                        result_line.setText("");
+                        result_line.setText("result");
                         break;
                     case R.id.reverse:
                         numbers.reverse();
