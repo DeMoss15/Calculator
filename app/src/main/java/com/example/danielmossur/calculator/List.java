@@ -41,8 +41,14 @@ public class List {
 
     void redo()
     {
+        if (tail.fraction_range > 0)
+            tail.fraction_range--;
+        if (tail.fraction_range == 0 && tail.fraction_path){
+            tail.fraction_path = false;
+            tail.data = tail.data.substring(0,tail.data.length()-1);
+        }
         if (tail.data != null)
-            if (tail.data.equals("") || (tail.data.contains("-") && tail.data.length() == 2))
+            if (tail.data.length() < 2 || (tail.data.contains("-") && tail.data.length() == 2))
                 tail.data = null;
             else
                 tail.data = tail.data.substring(0,tail.data.length()-1);
@@ -137,7 +143,11 @@ public class List {
             }
         }
 
-        head.fraction_range = tail.data.substring(tail.data.indexOf('.'),tail.data.length()-1).length();
+        if (head.data.contains(".")) {
+            head.fraction_path = true;
+            head.fraction_range = 6;
+            head.data = head.data.substring(0, head.data.indexOf('.')+7);
+        }
 
         if (head.next == null){
             return head.data;
