@@ -110,15 +110,19 @@ public class List {
             factr_math(t);
             t = t.next;
         }
-        
-        t = head;
 
-        while (t.next != null) {    //пока следующий элемент существует
+        t = head;
+        while (t.next != null) {
             if (t.next.operator == '^')
             {
                 t.data = "" + Math.pow(Double.parseDouble(t.data), Double.parseDouble(t.next.data));
                 delEl(t.next);
             } else
+                t = t.next;
+        }
+
+        t = head;
+        while (t.next != null) {    //пока следующий элемент существует
             if (t.next.operator == '*') {
                 t.data = "" + (Double.parseDouble(t.data) * Double.parseDouble(t.next.data));
                 delEl(t.next);
@@ -147,14 +151,12 @@ public class List {
             }
         }
 
-        if (head.data.contains(".")) {
-            if (head.data.substring(head.data.indexOf('.')).length()>6)
+        if (head.data.contains(".")) { // проблема вывода данных в большей своей части зависит от точности вычислений
+            if ( head.data.endsWith(".0"))
             {
-                head.fraction_range = 6;
-                head.data = head.data.substring(0, head.data.indexOf('.')+7);
-            } else {
-                head.fraction_range = head.data.substring(head.data.indexOf('.')).length()-1;
-            }
+                head.data = head.data.substring(0, head.data.indexOf('.'));
+                head.fraction_range = -1;
+            } else head.fraction_range = head.data.substring(head.data.indexOf('.')).length();
         }
 
         if (head.next == null){
@@ -218,7 +220,7 @@ public class List {
                 text = "Факториал больше 12 взять тяжело! \nВот результат без факториала:";
                 toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
                 toast.show();
-                return; //здесь будет тост о точности вычислений
+                return;
             }
             for (int i=1; i<=n; i++)
             {
