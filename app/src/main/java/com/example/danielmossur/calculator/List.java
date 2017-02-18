@@ -9,12 +9,12 @@ import java.util.Locale;
  * Created by Daniel Mossur on 16.01.2017.
  */
 
-public class List {
+class List {
     private ListElement head;       // указатель на первый элемент
     private ListElement tail;       // указатель последний элемент
     private Context context;
     private CharSequence text;
-    Toast toast;
+    private Toast toast;
 
     void set_context(Context a){
         context = a;
